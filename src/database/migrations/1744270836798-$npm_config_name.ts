@@ -1,0 +1,128 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class  $npmConfigName1744270836798 implements MigrationInterface {
+    name = ' $npmConfigName1744270836798'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TABLE "roles" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(50) NOT NULL, "description" text, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_c1433d71a4838793a49dcad46ab" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_648e3f5447f725579d7d4ffdfb" ON "roles" ("name") `);
+        await queryRunner.query(`CREATE TABLE "product_images" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "product_id" uuid NOT NULL, "variant_id" uuid, "image_url" character varying(1024) NOT NULL, "alt_text" character varying(255), "is_thumbnail" boolean NOT NULL DEFAULT false, "display_order" integer NOT NULL DEFAULT '0', "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_1974264ea7265989af8392f63a1" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_4f166bb8c2bfcef2498d97b406" ON "product_images" ("product_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_7645bd68229997627f7b219168" ON "product_images" ("variant_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_72c2f3d96d33b502b6053f3be7" ON "product_images" ("is_thumbnail") `);
+        await queryRunner.query(`CREATE TYPE "public"."products_status_enum" AS ENUM('Draft', 'Active', 'Archived')`);
+        await queryRunner.query(`CREATE TABLE "products" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "description" text, "brand" character varying(100), "category_id" uuid NOT NULL, "status" "public"."products_status_enum" NOT NULL DEFAULT 'Draft', "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_0806c755e0aca124e67c0cf6d7d" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_4c9fb58de893725258746385e1" ON "products" ("name") `);
+        await queryRunner.query(`CREATE INDEX "IDX_9a5f6868c96e0069e699f33e12" ON "products" ("category_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_1846199852a695713b1f8f5e9a" ON "products" ("status") `);
+        await queryRunner.query(`CREATE INDEX "IDX_718dfbc007ec098cfa28295ca7" ON "products" ("deleted_at") `);
+        await queryRunner.query(`CREATE TABLE "categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "description" text, "parent_id" uuid, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_24dbc6126a28ff948da33e97d3b" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_8b0be371d28245da6e4f4b6187" ON "categories" ("name") `);
+        await queryRunner.query(`CREATE INDEX "IDX_88cea2dc9c31951d06437879b4" ON "categories" ("parent_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_a184f5dd6c131f01b9f48968f0" ON "categories" ("deleted_at") `);
+        await queryRunner.query(`CREATE TABLE "attributes" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(100) NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_89afb34fd1fdb2ceb1cea6c57df" UNIQUE ("name"), CONSTRAINT "PK_32216e2e61830211d3a5d7fa72c" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_89afb34fd1fdb2ceb1cea6c57d" ON "attributes" ("name") `);
+        await queryRunner.query(`CREATE TABLE "attribute_values" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "attribute_id" uuid NOT NULL, "value" character varying(255) NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_e1f06829f9d8ec2b764be5ab9f4" UNIQUE ("attribute_id", "value"), CONSTRAINT "PK_3babf93d1842d73e7ba849c0160" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_be02d0f6a15bc7a0d835f832b6" ON "attribute_values" ("attribute_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_c50ded5ffaf7feca4223cf33c4" ON "attribute_values" ("value") `);
+        await queryRunner.query(`CREATE TABLE "promotions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "product_variant_id" uuid NOT NULL, "promotional_price" numeric(12,2) NOT NULL, "start_date" TIMESTAMP WITH TIME ZONE NOT NULL, "end_date" TIMESTAMP WITH TIME ZONE NOT NULL, "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "CHK_ebb0015d9264f62f74dba69155" CHECK ("promotional_price" >= 0), CONSTRAINT "CHK_b96a331be0bfecd0c8a310de4f" CHECK ("end_date" > "start_date"), CONSTRAINT "PK_380cecbbe3ac11f0e5a7c452c34" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_c318671d105f17892e9ef6c1c1" ON "promotions" ("product_variant_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_47f90257efdcd9a80462465816" ON "promotions" ("is_active") `);
+        await queryRunner.query(`CREATE TABLE "product_variants" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "product_id" uuid NOT NULL, "sku" character varying(100) NOT NULL, "price" numeric(12,2) NOT NULL DEFAULT '0', "quantity" integer NOT NULL DEFAULT '0', "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "UQ_46f236f21640f9da218a063a866" UNIQUE ("sku"), CONSTRAINT "PK_281e3f2c55652d6a22c0aa59fd7" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_6343513e20e2deab45edfce131" ON "product_variants" ("product_id") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_46f236f21640f9da218a063a86" ON "product_variants" ("sku") `);
+        await queryRunner.query(`CREATE INDEX "IDX_e0e4ac75611d87deb59a2333fb" ON "product_variants" ("deleted_at") `);
+        await queryRunner.query(`CREATE TYPE "public"."inventory_logs_reason_enum" AS ENUM('Manual Stock In', 'Manual Stock Out', 'Initial Stock', 'Sale Adjustment', 'Return Stock', 'Inventory Count Adjustment', 'Transfer In', 'Transfer Out', 'Damage/Loss')`);
+        await queryRunner.query(`CREATE TABLE "inventory_logs" ("id" BIGSERIAL NOT NULL, "user_id" uuid, "product_variant_id" uuid NOT NULL, "change_quantity" integer NOT NULL, "new_quantity" integer NOT NULL, "reason" "public"."inventory_logs_reason_enum" NOT NULL, "notes" text, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_06b444680ab11eb7c7d0ed6eced" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_0786e7b41f2c50ecf588cbd1df" ON "inventory_logs" ("user_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_da291f1af5fbb3921c89343f2c" ON "inventory_logs" ("product_variant_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_4518fe9f1493143a793e42cced" ON "inventory_logs" ("reason") `);
+        await queryRunner.query(`CREATE INDEX "IDX_faf666386b22734e6e56326ac8" ON "inventory_logs" ("created_at") `);
+        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "password_hash" character varying(255) NOT NULL, "role_id" uuid NOT NULL, "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_97672ac88f789774dd47f7c8be" ON "users" ("email") `);
+        await queryRunner.query(`CREATE INDEX "IDX_20c7aea6112bef71528210f631" ON "users" ("is_active") `);
+        await queryRunner.query(`CREATE INDEX "IDX_073999dfec9d14522f0cf58cd6" ON "users" ("deleted_at") `);
+        await queryRunner.query(`CREATE TABLE "category_attributes" ("category_id" uuid NOT NULL, "attribute_id" uuid NOT NULL, CONSTRAINT "PK_e135f7d323a2899937cd2a2cb7b" PRIMARY KEY ("category_id", "attribute_id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_55050a8a1b2d2f5202f226d4ac" ON "category_attributes" ("category_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_6730826326fa81ff5511cb0981" ON "category_attributes" ("attribute_id") `);
+        await queryRunner.query(`CREATE TABLE "variant_attribute_values" ("variant_id" uuid NOT NULL, "attribute_value_id" uuid NOT NULL, CONSTRAINT "PK_82eb016987ab53367e1a442c9a2" PRIMARY KEY ("variant_id", "attribute_value_id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_5df07e5f75117c9eca2c2ba505" ON "variant_attribute_values" ("variant_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_c714239ff4355d5e4dbfed5d19" ON "variant_attribute_values" ("attribute_value_id") `);
+        await queryRunner.query(`ALTER TABLE "product_images" ADD CONSTRAINT "FK_4f166bb8c2bfcef2498d97b4068" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "product_images" ADD CONSTRAINT "FK_7645bd68229997627f7b2191687" FOREIGN KEY ("variant_id") REFERENCES "product_variants"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "products" ADD CONSTRAINT "FK_9a5f6868c96e0069e699f33e124" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "categories" ADD CONSTRAINT "FK_88cea2dc9c31951d06437879b40" FOREIGN KEY ("parent_id") REFERENCES "categories"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "attribute_values" ADD CONSTRAINT "FK_be02d0f6a15bc7a0d835f832b62" FOREIGN KEY ("attribute_id") REFERENCES "attributes"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "promotions" ADD CONSTRAINT "FK_c318671d105f17892e9ef6c1c14" FOREIGN KEY ("product_variant_id") REFERENCES "product_variants"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD CONSTRAINT "FK_6343513e20e2deab45edfce1316" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "inventory_logs" ADD CONSTRAINT "FK_0786e7b41f2c50ecf588cbd1df6" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "inventory_logs" ADD CONSTRAINT "FK_da291f1af5fbb3921c89343f2cd" FOREIGN KEY ("product_variant_id") REFERENCES "product_variants"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "users" ADD CONSTRAINT "FK_a2cecd1a3531c0b041e29ba46e1" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "category_attributes" ADD CONSTRAINT "FK_55050a8a1b2d2f5202f226d4ac1" FOREIGN KEY ("category_id") REFERENCES "categories"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+        await queryRunner.query(`ALTER TABLE "category_attributes" ADD CONSTRAINT "FK_6730826326fa81ff5511cb0981a" FOREIGN KEY ("attribute_id") REFERENCES "attributes"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "variant_attribute_values" ADD CONSTRAINT "FK_5df07e5f75117c9eca2c2ba5051" FOREIGN KEY ("variant_id") REFERENCES "product_variants"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+        await queryRunner.query(`ALTER TABLE "variant_attribute_values" ADD CONSTRAINT "FK_c714239ff4355d5e4dbfed5d196" FOREIGN KEY ("attribute_value_id") REFERENCES "attribute_values"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "variant_attribute_values" DROP CONSTRAINT "FK_c714239ff4355d5e4dbfed5d196"`);
+        await queryRunner.query(`ALTER TABLE "variant_attribute_values" DROP CONSTRAINT "FK_5df07e5f75117c9eca2c2ba5051"`);
+        await queryRunner.query(`ALTER TABLE "category_attributes" DROP CONSTRAINT "FK_6730826326fa81ff5511cb0981a"`);
+        await queryRunner.query(`ALTER TABLE "category_attributes" DROP CONSTRAINT "FK_55050a8a1b2d2f5202f226d4ac1"`);
+        await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT "FK_a2cecd1a3531c0b041e29ba46e1"`);
+        await queryRunner.query(`ALTER TABLE "inventory_logs" DROP CONSTRAINT "FK_da291f1af5fbb3921c89343f2cd"`);
+        await queryRunner.query(`ALTER TABLE "inventory_logs" DROP CONSTRAINT "FK_0786e7b41f2c50ecf588cbd1df6"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP CONSTRAINT "FK_6343513e20e2deab45edfce1316"`);
+        await queryRunner.query(`ALTER TABLE "promotions" DROP CONSTRAINT "FK_c318671d105f17892e9ef6c1c14"`);
+        await queryRunner.query(`ALTER TABLE "attribute_values" DROP CONSTRAINT "FK_be02d0f6a15bc7a0d835f832b62"`);
+        await queryRunner.query(`ALTER TABLE "categories" DROP CONSTRAINT "FK_88cea2dc9c31951d06437879b40"`);
+        await queryRunner.query(`ALTER TABLE "products" DROP CONSTRAINT "FK_9a5f6868c96e0069e699f33e124"`);
+        await queryRunner.query(`ALTER TABLE "product_images" DROP CONSTRAINT "FK_7645bd68229997627f7b2191687"`);
+        await queryRunner.query(`ALTER TABLE "product_images" DROP CONSTRAINT "FK_4f166bb8c2bfcef2498d97b4068"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_c714239ff4355d5e4dbfed5d19"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_5df07e5f75117c9eca2c2ba505"`);
+        await queryRunner.query(`DROP TABLE "variant_attribute_values"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_6730826326fa81ff5511cb0981"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_55050a8a1b2d2f5202f226d4ac"`);
+        await queryRunner.query(`DROP TABLE "category_attributes"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_073999dfec9d14522f0cf58cd6"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_20c7aea6112bef71528210f631"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_97672ac88f789774dd47f7c8be"`);
+        await queryRunner.query(`DROP TABLE "users"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_faf666386b22734e6e56326ac8"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_4518fe9f1493143a793e42cced"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_da291f1af5fbb3921c89343f2c"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_0786e7b41f2c50ecf588cbd1df"`);
+        await queryRunner.query(`DROP TABLE "inventory_logs"`);
+        await queryRunner.query(`DROP TYPE "public"."inventory_logs_reason_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_e0e4ac75611d87deb59a2333fb"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_46f236f21640f9da218a063a86"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_6343513e20e2deab45edfce131"`);
+        await queryRunner.query(`DROP TABLE "product_variants"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_47f90257efdcd9a80462465816"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_c318671d105f17892e9ef6c1c1"`);
+        await queryRunner.query(`DROP TABLE "promotions"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_c50ded5ffaf7feca4223cf33c4"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_be02d0f6a15bc7a0d835f832b6"`);
+        await queryRunner.query(`DROP TABLE "attribute_values"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_89afb34fd1fdb2ceb1cea6c57d"`);
+        await queryRunner.query(`DROP TABLE "attributes"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_a184f5dd6c131f01b9f48968f0"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_88cea2dc9c31951d06437879b4"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_8b0be371d28245da6e4f4b6187"`);
+        await queryRunner.query(`DROP TABLE "categories"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_718dfbc007ec098cfa28295ca7"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_1846199852a695713b1f8f5e9a"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_9a5f6868c96e0069e699f33e12"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_4c9fb58de893725258746385e1"`);
+        await queryRunner.query(`DROP TABLE "products"`);
+        await queryRunner.query(`DROP TYPE "public"."products_status_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_72c2f3d96d33b502b6053f3be7"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_7645bd68229997627f7b219168"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_4f166bb8c2bfcef2498d97b406"`);
+        await queryRunner.query(`DROP TABLE "product_images"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_648e3f5447f725579d7d4ffdfb"`);
+        await queryRunner.query(`DROP TABLE "roles"`);
+    }
+
+}

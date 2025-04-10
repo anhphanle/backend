@@ -1,43 +1,45 @@
-// import { Module } from '@nestjs/common';
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
-
-// @Module({
-//   imports: [],
-//   controllers: [AppController],
-//   providers: [AppService],
-// })
-// export class AppModule {}
-
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { RolesModule } from './roles/roles.module'; // Đã import
+import { UsersModule } from './users/users.module'; // Đã import
+import { CategoriesModule } from './categories/categories.module'; // Đã import
+import { AttributesModule } from './attributes/attributes.module'; // Đã import
+import { ProductsModule } from './products/products.module'; // Đã import
+import { InventoryModule } from './inventory/inventory.module'; // Đã import
+// Import các entity để TypeORM biết khi cấu hình datasource cho CLI (sẽ dùng cho migrations)
+import { Role } from './roles/entities/role.entity';
+import { User } from './users/entities/user.entity';
+import { Category } from './categories/entities/category.entity';
+import { Attribute } from './attributes/entities/attribute.entity';
+import { AttributeValue } from './attributes/entities/attribute-value.entity';
+import { Product } from './products/entities/product.entity';
+import { ProductVariant } from './products/entities/product-variant.entity';
+import { ProductImage } from './products/entities/product-image.entity';
+import { Promotion } from './products/entities/promotion.entity';
+import { InventoryLog } from './inventory/entities/inventory-log.entity';
+import { dataSourceOptions } from '../data-source';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Biến môi trường có sẵn toàn ứng dụng
+      isGlobal: true,
       envFilePath: '.env',
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST', 'localhost'),
-        port: parseInt(configService.get<string>('DB_PORT')!, 10),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_DATABASE'),
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'], // Tự động load entities
-        synchronize: true, // Chỉ dùng cho development, tự động tạo schema DB. Production sẽ dùng migrations.
-        // ssl: configService.get<string>('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false, // Cấu hình SSL nếu cần cho Production
-      }),
-      inject: [ConfigService],
+    TypeOrmModule.forRoot({
+      ...dataSourceOptions, // Sử dụng các cấu hình từ data-source.ts
+      autoLoadEntities: true, // Tự động load entities đã đăng ký qua forFeature
+      synchronize: false, // !!! QUAN TRỌNG: Tắt synchronize khi dùng migrations !!!
     }),
-    // Thêm các Feature Modules khác ở đây khi tạo
-    // ví dụ: AuthModule, UsersModule, ProductsModule...
+
+    UsersModule,
+    RolesModule,
+    CategoriesModule,
+    AttributesModule,
+    ProductsModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
