@@ -4,7 +4,7 @@ export declare class Category {
     id: string;
     name: string;
     description: string;
-    parentId?: string;
+    parentId: string | null;
     createdAt: Date;
     updatedAt: Date;
     deletedAt?: Date;

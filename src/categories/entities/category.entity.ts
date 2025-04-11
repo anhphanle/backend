@@ -29,7 +29,7 @@ export class Category {
 
   @Column({ name: 'parent_id', type: 'uuid', nullable: true })
   @Index() // Index cột parent_id
-  parentId?: string;
+  parentId: string | null;
 
   @CreateDateColumn({
     name: 'created_at',

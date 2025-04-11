@@ -43,7 +43,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ name: 'parent_id', type: 'uuid', nullable: true }),
     (0, typeorm_1.Index)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], Category.prototype, "parentId", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({
