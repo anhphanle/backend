@@ -21,6 +21,8 @@ import { ProductImage } from './products/entities/product-image.entity';
 import { Promotion } from './products/entities/promotion.entity';
 import { InventoryLog } from './inventory/entities/inventory-log.entity';
 import { dataSourceOptions } from '../data-source';
+import { AuthModule } from './auth/auth.module';
+import { SeedModule } from './database/seed/seed.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { dataSourceOptions } from '../data-source';
     AttributesModule,
     ProductsModule,
     InventoryModule,
+    AuthModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

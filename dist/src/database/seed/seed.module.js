@@ -6,19 +6,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RolesModule = void 0;
+exports.SeedModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const role_entity_1 = require("./entities/role.entity");
-const roles_service_1 = require("./roles.service");
-let RolesModule = class RolesModule {
+const config_1 = require("@nestjs/config");
+const roles_module_1 = require("../../roles/roles.module");
+const users_module_1 = require("../../users/users.module");
+const seed_service_1 = require("./seed.service");
+let SeedModule = class SeedModule {
 };
-exports.RolesModule = RolesModule;
-exports.RolesModule = RolesModule = __decorate([
+exports.SeedModule = SeedModule;
+exports.SeedModule = SeedModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([role_entity_1.Role])],
-        providers: [roles_service_1.RolesService],
-        exports: [roles_service_1.RolesService, typeorm_1.TypeOrmModule],
+        imports: [
+            config_1.ConfigModule,
+            roles_module_1.RolesModule,
+            users_module_1.UsersModule,
+        ],
+        providers: [seed_service_1.SeedService, common_1.Logger],
+        exports: [seed_service_1.SeedService],
     })
-], RolesModule);
-//# sourceMappingURL=roles.module.js.map
+], SeedModule);
+//# sourceMappingURL=seed.module.js.map
