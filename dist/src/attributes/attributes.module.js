@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AttributesModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const attributes_service_1 = require("./attributes.service");
+const attributes_controller_1 = require("./attributes.controller");
 const attribute_entity_1 = require("./entities/attribute.entity");
 const attribute_value_entity_1 = require("./entities/attribute-value.entity");
 let AttributesModule = class AttributesModule {
@@ -19,6 +21,9 @@ exports.AttributesModule = AttributesModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([attribute_entity_1.Attribute, attribute_value_entity_1.AttributeValue]),
         ],
+        controllers: [attributes_controller_1.AttributesController],
+        providers: [attributes_service_1.AttributesService],
+        exports: [attributes_service_1.AttributesService],
     })
 ], AttributesModule);
 //# sourceMappingURL=attributes.module.js.map
