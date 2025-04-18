@@ -23,6 +23,7 @@ import { InventoryLog } from './inventory/entities/inventory-log.entity';
 import { dataSourceOptions } from '../data-source';
 import { AuthModule } from './auth/auth.module';
 import { SeedModule } from './database/seed/seed.module';
+import { CloudStorageModule } from './cloud-storage/cloud-storage.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { SeedModule } from './database/seed/seed.module';
     InventoryModule,
     AuthModule,
     SeedModule,
+    CloudStorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

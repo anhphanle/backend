@@ -1,11 +1,17 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductsService } from './products.service';
+import { ProductsController } from './products.controller';
 import { Product } from './entities/product.entity';
 import { ProductVariant } from './entities/product-variant.entity';
 import { ProductImage } from './entities/product-image.entity';
-import { Promotion } from './entities/promotion.entity';
-// import { CategoriesModule } from '../categories/categories.module'; // Chắc chắn cần sau này
-// import { AttributesModule } from '../attributes/attributes.module'; // Chắc chắn cần sau này
+import { Category } from '../categories/entities/category.entity'; // Import entity liên quan
+import { AttributeValue } from '../attributes/entities/attribute-value.entity'; // Import entity liên quan
+// import { InventoryLog } from '../inventory/entities/inventory-log.entity'; // Sẽ import khi có InventoryModule
+import { CategoriesModule } from '../categories/categories.module'; // Import Module liên quan
+import { AttributesModule } from '../attributes/attributes.module'; // Import Module liên quan
+// import { InventoryModule } from '../inventory/inventory.module'; // Sẽ import khi có InventoryModule
+// import { AuthModule } from '../auth/auth.module'; // Nếu cần
 
 @Module({
   imports: [
@@ -13,13 +19,17 @@ import { Promotion } from './entities/promotion.entity';
       Product,
       ProductVariant,
       ProductImage,
-      Promotion, // Đăng ký tất cả entities liên quan đến Product
+      Category, // Cần để inject repository
+      AttributeValue, // Cần để inject repository
+      // InventoryLog, // Sẽ thêm sau
     ]),
-    // CategoriesModule, // Sẽ import khi cần service
-    // AttributesModule, // Sẽ import khi cần service
+    // forwardRef(() => AuthModule), // Nếu có circular dependency
+    forwardRef(() => CategoriesModule), // Nếu CategoriesModule dùng ProductsService
+    forwardRef(() => AttributesModule), // Nếu AttributesModule dùng ProductsService
+    // forwardRef(() => InventoryModule), // Sẽ thêm sau
   ],
-  // controllers: [],
-  // providers: [],
-  // exports: []
+  controllers: [ProductsController],
+  providers: [ProductsService],
+  exports: [ProductsService], // Export nếu cần
 })
 export class ProductsModule {}

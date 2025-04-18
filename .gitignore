@@ -1,3 +1,5 @@
 "node_modules\n.env\ndist"
 node_modules
 .env
+*.json
+gcp-keys/

@@ -9,10 +9,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const products_service_1 = require("./products.service");
+const products_controller_1 = require("./products.controller");
 const product_entity_1 = require("./entities/product.entity");
 const product_variant_entity_1 = require("./entities/product-variant.entity");
 const product_image_entity_1 = require("./entities/product-image.entity");
-const promotion_entity_1 = require("./entities/promotion.entity");
+const category_entity_1 = require("../categories/entities/category.entity");
+const attribute_value_entity_1 = require("../attributes/entities/attribute-value.entity");
+const categories_module_1 = require("../categories/categories.module");
+const attributes_module_1 = require("../attributes/attributes.module");
 let ProductsModule = class ProductsModule {
 };
 exports.ProductsModule = ProductsModule;
@@ -23,9 +28,15 @@ exports.ProductsModule = ProductsModule = __decorate([
                 product_entity_1.Product,
                 product_variant_entity_1.ProductVariant,
                 product_image_entity_1.ProductImage,
-                promotion_entity_1.Promotion,
+                category_entity_1.Category,
+                attribute_value_entity_1.AttributeValue,
             ]),
+            (0, common_1.forwardRef)(() => categories_module_1.CategoriesModule),
+            (0, common_1.forwardRef)(() => attributes_module_1.AttributesModule),
         ],
+        controllers: [products_controller_1.ProductsController],
+        providers: [products_service_1.ProductsService],
+        exports: [products_service_1.ProductsService],
     })
 ], ProductsModule);
 //# sourceMappingURL=products.module.js.map

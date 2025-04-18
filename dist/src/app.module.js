@@ -21,6 +21,7 @@ const inventory_module_1 = require("./inventory/inventory.module");
 const data_source_1 = require("../data-source");
 const auth_module_1 = require("./auth/auth.module");
 const seed_module_1 = require("./database/seed/seed.module");
+const cloud_storage_module_1 = require("./cloud-storage/cloud-storage.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -44,6 +45,7 @@ exports.AppModule = AppModule = __decorate([
             inventory_module_1.InventoryModule,
             auth_module_1.AuthModule,
             seed_module_1.SeedModule,
+            cloud_storage_module_1.CloudStorageModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
